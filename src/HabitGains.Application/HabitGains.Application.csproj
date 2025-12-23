@@ -1,0 +1,5 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <ProjectReference Include="..\HabitGains.Domain\HabitGains.Domain.csproj" />
+    </ItemGroup>
+</Project>
