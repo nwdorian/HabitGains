@@ -1,5 +1,6 @@
 using HabitGains.Infrastructure.Database.Initializer;
 using HabitGains.Infrastructure.Database.Seeding;
+using Serilog;
 
 namespace HabitGains.Web.Core.Extensions;
 
@@ -20,6 +21,7 @@ public static class MiddlewareExtensions
         }
 
         app.UseHttpsRedirection();
+        app.UseCustomSerilogRequestLogging();
 
         app.UseRouting();
 
@@ -32,6 +34,39 @@ public static class MiddlewareExtensions
         await app.SeedDatabaseAsync();
 
         return app;
+    }
+
+    private static void UseCustomSerilogRequestLogging(this WebApplication app)
+    {
+        app.UseSerilogRequestLogging(opts =>
+        {
+            opts.GetLevel = (httpContext, elapsed, ex) =>
+            {
+                PathString path = httpContext.Request.Path;
+
+                if (
+                    path.StartsWithSegments("/css")
+                    || path.StartsWithSegments("/js")
+                    || path.StartsWithSegments("/lib")
+                    || path.StartsWithSegments("/favicon.ico")
+                )
+                {
+                    return Serilog.Events.LogEventLevel.Debug;
+                }
+
+                return Serilog.Events.LogEventLevel.Information;
+            };
+
+            opts.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+            {
+                diagnosticContext.Set("CorrelationId", httpContext.TraceIdentifier);
+                diagnosticContext.Set("RequestMethod", httpContext.Request.Method);
+                diagnosticContext.Set("RequestPath", httpContext.Request.Path);
+                diagnosticContext.Set("Endpoint", httpContext.GetEndpoint()?.DisplayName);
+            };
+
+            opts.MessageTemplate = "Handled {RequestMethod} {RequestPath} in {Elapsed:0.0000} ms";
+        });
     }
 
     private static async Task InitializeDatabaseAsync(this IApplicationBuilder app)

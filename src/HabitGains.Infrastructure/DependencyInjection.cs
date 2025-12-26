@@ -1,8 +1,10 @@
 using HabitGains.Application.Abstractions;
+using HabitGains.Domain.Core.Abstractions;
 using HabitGains.Infrastructure.Database.ConnectionFactory;
 using HabitGains.Infrastructure.Database.Initializer;
 using HabitGains.Infrastructure.Database.Repositories;
 using HabitGains.Infrastructure.Database.Seeding;
+using HabitGains.Infrastructure.Time;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,11 +16,16 @@ public static class DependencyInjection
     {
         services.AddDatabase(configuration);
         services.AddRepositories();
-
-        services.AddScoped<IDbInitializer, DbInitializer>();
-        services.AddScoped<IDbSeeder, DbSeeder>();
+        services.AddServices();
 
         return services;
+    }
+
+    private static void AddServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        services.AddScoped<IDbInitializer, DbInitializer>();
+        services.AddScoped<IDbSeeder, DbSeeder>();
     }
 
     private static void AddDatabase(this IServiceCollection services, IConfiguration configuration)

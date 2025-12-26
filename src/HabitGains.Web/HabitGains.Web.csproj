@@ -5,5 +5,11 @@
     <ItemGroup>
         <Folder Include="Core\" />
         <Folder Include="Core\Extensions\" />
+        <Folder Include="Core\Infrastructure\" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Serilog.AspNetCore" />
+      <PackageReference Include="Serilog.Sinks.Console" />
+      <PackageReference Include="Serilog.Sinks.File" />
     </ItemGroup>
 </Project>
