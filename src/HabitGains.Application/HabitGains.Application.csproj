@@ -2,4 +2,7 @@
     <ItemGroup>
         <ProjectReference Include="..\HabitGains.Domain\HabitGains.Domain.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Abstractions\" />
+    </ItemGroup>
 </Project>

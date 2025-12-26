@@ -1,1 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk"></Project>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <Folder Include="Core\" />
+        <Folder Include="Core\Abstractions\" />
+        <Folder Include="Entries\" />
+        <Folder Include="Habits\" />
+    </ItemGroup>
+</Project>
