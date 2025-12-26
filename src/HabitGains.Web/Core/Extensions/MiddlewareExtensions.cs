@@ -1,4 +1,5 @@
 using HabitGains.Infrastructure.Database.Initializer;
+using HabitGains.Infrastructure.Database.Seeding;
 
 namespace HabitGains.Web.Core.Extensions;
 
@@ -28,6 +29,7 @@ public static class MiddlewareExtensions
         app.MapRazorPages().WithStaticAssets();
 
         await app.InitializeDatabaseAsync();
+        await app.SeedDatabaseAsync();
 
         return app;
     }
@@ -36,8 +38,17 @@ public static class MiddlewareExtensions
     {
         using IServiceScope scope = app.ApplicationServices.CreateScope();
 
-        IDbInitializer dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        IDbInitializer initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
 
-        await dbInitializer.RunAsync();
+        await initializer.RunAsync();
+    }
+
+    private static async Task SeedDatabaseAsync(this IApplicationBuilder app)
+    {
+        using IServiceScope scope = app.ApplicationServices.CreateScope();
+
+        IDbSeeder seeder = scope.ServiceProvider.GetRequiredService<IDbSeeder>();
+
+        await seeder.RunAsync();
     }
 }

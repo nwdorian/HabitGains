@@ -5,6 +5,7 @@ root = true
 # All files
 [*]
 indent_style = space
+max_line_length = 120
 
 # XML project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
@@ -145,9 +146,6 @@ csharp_preserve_single_line_statements = true
 csharp_preserve_single_line_blocks = true
 
 # Custom rules
-
-# Maximum line length
-max_line_length = 120
 
 # CA1848: Use the LoggerMessage delegates
 dotnet_diagnostic.CA1848.severity = none

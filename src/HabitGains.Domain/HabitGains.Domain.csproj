@@ -1,1 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk"></Project>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <Folder Include="Entries\" />
+        <Folder Include="Habits\" />
+    </ItemGroup>
+</Project>

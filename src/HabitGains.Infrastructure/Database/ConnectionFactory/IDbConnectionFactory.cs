@@ -1,8 +1,8 @@
-using System.Data;
+using Microsoft.Data.Sqlite;
 
 namespace HabitGains.Infrastructure.Database.ConnectionFactory;
 
 public interface IDbConnectionFactory
 {
-    Task<IDbConnection> CreateConnectionAsync(CancellationToken token = default);
+    Task<SqliteConnection> CreateConnectionAsync(CancellationToken token = default);
 }

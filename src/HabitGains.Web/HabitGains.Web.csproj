@@ -3,7 +3,7 @@
         <ProjectReference Include="..\HabitGains.Infrastructure\HabitGains.Infrastructure.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Core\" />
-      <Folder Include="Core\Extensions\" />
+        <Folder Include="Core\" />
+        <Folder Include="Core\Extensions\" />
     </ItemGroup>
 </Project>
