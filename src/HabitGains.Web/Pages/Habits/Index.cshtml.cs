@@ -15,16 +15,7 @@ namespace HabitGains.Web.Pages.Habits;
 public class IndexModel(GetHabits useCase, IHabitRepository habitRepository, IValidator<GetHabitsQuery> validator)
     : PageModel
 {
-    public IReadOnlyList<GetHabitsView>? Habits { get; set; }
-    public Metadata? Metadata { get; set; }
-    public string? SortColumn { get; set; }
-    public string? SortOrder { get; set; }
-    public string? SearchTerm { get; set; }
-    public SelectList? PageSizeOptions { get; set; }
-    public SelectList? MeasurementOptions { get; set; }
-    public string? MeasurementFilter { get; set; }
-    public SelectList? FavoriteOptions { get; set; }
-    public string? FavoriteFilter { get; set; }
+    public GetHabitsView View { get; set; } = default!;
 
     public async Task<IActionResult> OnGetAsync(GetHabitsQuery query, CancellationToken cancellationToken = default)
     {
@@ -36,29 +27,7 @@ public class IndexModel(GetHabits useCase, IHabitRepository habitRepository, IVa
             return Page();
         }
 
-        PageSizeOptions = new SelectList(PagingDefaults.PageSizeOptions, selectedValue: query.PageSize);
-        SortColumn = query.SortColumn;
-        SortOrder = query.SortOrder;
-        SearchTerm = query.SearchTerm;
-        MeasurementFilter = query.Measurement;
-        MeasurementOptions = new SelectList(
-            await habitRepository.GetHabitMeasurements(cancellationToken),
-            selectedValue: MeasurementFilter
-        );
-        FavoriteFilter = query.Favorite;
-        FavoriteOptions = new SelectList(
-            new[]
-            {
-                new { Value = "", Text = "All" },
-                new { Value = "true", Text = "Favorite" },
-                new { Value = "false", Text = "Not Favorite" },
-            },
-            "Value",
-            "Text",
-            FavoriteFilter
-        );
-
-        bool? favorite = FavoriteFilter switch
+        bool? favorite = query.Favorite switch
         {
             "true" => true,
             "false" => false,
@@ -77,16 +46,46 @@ public class IndexModel(GetHabits useCase, IHabitRepository habitRepository, IVa
 
         GetHabitsResponse response = await useCase.Handle(request, cancellationToken);
 
-        Habits = response.Items.Select(h => new GetHabitsView(h.Name, h.Measurement, h.Favorite, h.CreatedAt)).ToList();
+        View = new GetHabitsView
+        {
+            Habits = response
+                .Items.Select(h => new HabitItem(h.Id, h.Name, h.Measurement, h.Favorite, h.CreatedAt))
+                .ToList(),
 
-        Metadata = new Metadata(
-            response.Page,
-            response.PageSize,
-            response.TotalCount,
-            response.TotalPages,
-            response.HasPreviousPage,
-            response.HasNextPage
-        );
+            Metadata = new Metadata(
+                response.Page,
+                response.PageSize,
+                response.TotalCount,
+                response.TotalPages,
+                response.HasPreviousPage,
+                response.HasNextPage
+            ),
+
+            SortColumn = query.SortColumn,
+            SortOrder = query.SortOrder,
+            SearchTerm = query.SearchTerm,
+
+            MeasurementFilter = query.Measurement,
+            MeasurementOptions = new SelectList(
+                await habitRepository.GetHabitMeasurements(cancellationToken),
+                selectedValue: query.Measurement
+            ),
+
+            FavoriteFilter = query.Favorite,
+            FavoriteOptions = new SelectList(
+                new[]
+                {
+                    new { Value = "", Text = "All" },
+                    new { Value = "true", Text = "Favorite" },
+                    new { Value = "false", Text = "Not Favorite" },
+                },
+                "Value",
+                "Text",
+                query.Favorite
+            ),
+
+            PageSizeOptions = new SelectList(PagingDefaults.PageSizeOptions, selectedValue: query.PageSize),
+        };
 
         return Page();
     }
