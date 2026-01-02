@@ -8,5 +8,7 @@ public sealed class Habit
     public required string Name { get; set; }
     public required string Measurement { get; set; }
     public bool Favorite { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public List<Entry> Entries { get; set; } = [];
 }

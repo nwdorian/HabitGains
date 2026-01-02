@@ -1,5 +1,5 @@
 using System.Data.Common;
-using HabitGains.Application.Abstractions;
+using HabitGains.Application.Core.Abstractions.Repositories;
 using HabitGains.Domain.Entries;
 using HabitGains.Infrastructure.Database.ConnectionFactory;
 using Microsoft.Data.Sqlite;
@@ -15,8 +15,8 @@ public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRep
 
         using SqliteCommand command = connection.CreateCommand();
         command.CommandText = """
-                INSERT INTO entry (Id, HabitId, Date, Quantity)
-                VALUES (@Id, @HabitId, @Date, @Quantity)
+                INSERT INTO entry (Id, HabitId, Date, Quantity, CreatedAt, UpdatedAt)
+                VALUES (@Id, @HabitId, @Date, @Quantity, @CreatedAt, @UpdatedAt)
             """;
 
         foreach (Entry entry in entries)
@@ -26,6 +26,8 @@ public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRep
             command.Parameters.AddWithValue("@HabitId", entry.HabitId);
             command.Parameters.AddWithValue("@Date", entry.Date);
             command.Parameters.AddWithValue("@Quantity", entry.Quantity);
+            command.Parameters.AddWithValue("@CreatedAt", entry.CreatedAt);
+            command.Parameters.AddWithValue("@UpdatedAt", entry.UpdatedAt is null ? DBNull.Value : entry.UpdatedAt);
 
             await command.ExecuteNonQueryAsync();
         }

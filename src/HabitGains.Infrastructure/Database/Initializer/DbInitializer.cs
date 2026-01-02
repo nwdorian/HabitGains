@@ -15,7 +15,9 @@ public class DbInitializer(IDbConnectionFactory connectionFactory) : IDbInitiali
                 Id TEXT PRIMARY KEY,
                 Name TEXT NOT NULL,
                 Measurement TEXT NOT NULL,
-                Favorite INTEGER NOT NULL
+                Favorite INTEGER NOT NULL,
+                CreatedAt TEXT NOT NULL,
+                UpdatedAt TEXT NULL
                 )
             """;
 
@@ -27,6 +29,8 @@ public class DbInitializer(IDbConnectionFactory connectionFactory) : IDbInitiali
                 HabitId TEXT NOT NULL,
                 Date TEXT NOT NULL,
                 Quantity REAL NOT NULL,
+                CreatedAt TEXT NOT NULL,
+                UpdatedAt TEXT NULL,
                 FOREIGN KEY (HabitId) REFERENCES habit(Id)
             )
             """;

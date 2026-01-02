@@ -147,6 +147,9 @@ csharp_preserve_single_line_blocks = true
 
 # Custom rules
 
+# CS1998: This async method lacks 'await' operators and will run synchronously.
+dotnet_diagnostic.CS1998.severity = error
+
 # CA1848: Use the LoggerMessage delegates
 dotnet_diagnostic.CA1848.severity = none
 

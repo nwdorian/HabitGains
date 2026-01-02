@@ -14,6 +14,7 @@ public static class HabitFaker
                 Name = "Walking",
                 Measurement = "Kilometers",
                 Favorite = true,
+                CreatedAt = DateTime.UtcNow,
             },
             new()
             {
@@ -21,6 +22,7 @@ public static class HabitFaker
                 Name = "Drink water",
                 Measurement = "Glasses",
                 Favorite = true,
+                CreatedAt = DateTime.UtcNow.AddDays(-1),
             },
             new()
             {
@@ -28,6 +30,7 @@ public static class HabitFaker
                 Name = "Reading",
                 Measurement = "Hours",
                 Favorite = false,
+                CreatedAt = DateTime.UtcNow.AddDays(-2),
             },
             new()
             {
@@ -35,6 +38,7 @@ public static class HabitFaker
                 Name = "Meditation",
                 Measurement = "Hours",
                 Favorite = false,
+                CreatedAt = DateTime.UtcNow.AddDays(-3),
             },
             new()
             {
@@ -42,6 +46,7 @@ public static class HabitFaker
                 Name = "Running",
                 Measurement = "Kilometers",
                 Favorite = false,
+                CreatedAt = DateTime.UtcNow.AddDays(-4),
             },
             new()
             {
@@ -49,6 +54,7 @@ public static class HabitFaker
                 Name = "Stretching",
                 Measurement = "Hours",
                 Favorite = false,
+                CreatedAt = DateTime.UtcNow.AddDays(-5),
             },
             new()
             {
@@ -56,6 +62,7 @@ public static class HabitFaker
                 Name = "Sleep",
                 Measurement = "Hours",
                 Favorite = true,
+                CreatedAt = DateTime.UtcNow.AddDays(-6),
             },
             new()
             {
@@ -63,6 +70,7 @@ public static class HabitFaker
                 Name = "Coding",
                 Measurement = "Hours",
                 Favorite = true,
+                CreatedAt = DateTime.UtcNow.AddDays(-7),
             },
             new()
             {
@@ -70,6 +78,7 @@ public static class HabitFaker
                 Name = "Cooking",
                 Measurement = "Hours",
                 Favorite = true,
+                CreatedAt = DateTime.UtcNow.AddDays(-8),
             },
             new()
             {
@@ -77,6 +86,7 @@ public static class HabitFaker
                 Name = "Cleaning",
                 Measurement = "Hours",
                 Favorite = true,
+                CreatedAt = DateTime.UtcNow.AddDays(-9),
             },
             new()
             {
@@ -84,6 +94,7 @@ public static class HabitFaker
                 Name = "Journaling",
                 Measurement = "Hours",
                 Favorite = false,
+                CreatedAt = DateTime.UtcNow.AddDays(-10),
             },
             new()
             {
@@ -91,6 +102,7 @@ public static class HabitFaker
                 Name = "Yoga",
                 Measurement = "Hours",
                 Favorite = false,
+                CreatedAt = DateTime.UtcNow.AddDays(-11),
             },
             new()
             {
@@ -98,6 +110,7 @@ public static class HabitFaker
                 Name = "Shopping",
                 Measurement = "Hours",
                 Favorite = true,
+                CreatedAt = DateTime.UtcNow.AddDays(-12),
             },
             new()
             {
@@ -105,6 +118,7 @@ public static class HabitFaker
                 Name = "Praying",
                 Measurement = "Hours",
                 Favorite = false,
+                CreatedAt = DateTime.UtcNow.AddDays(-13),
             },
             new()
             {
@@ -112,6 +126,7 @@ public static class HabitFaker
                 Name = "Swimming",
                 Measurement = "Hours",
                 Favorite = false,
+                CreatedAt = DateTime.UtcNow.AddDays(-14),
             },
         };
     }

@@ -1,0 +1,190 @@
+﻿@page "{currentpage:int?}"
+@using HabitGains.Application.Habits
+@using HabitGains.Web.ViewModels.Habits
+@model Habits.IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<h1>Habits</h1>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+@if (ModelState.IsValid && Model.Habits is not null)
+{
+    <form asp-page="./Index" method="get" class="d-flex gap-3">
+        <div class="input-group w-auto">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" placeholder="Search..." name="searchTerm" value="@Model.SearchTerm" />
+            <button type="submit" class="btn btn-primary">
+                Search
+            </button>
+        </div>
+
+        <div class="input-group w-auto">
+            <span class="input-group-text">Measurement: </span>
+            <select name="measurement" asp-items="Model.MeasurementOptions" class="form-select w-auto"
+                onchange="this.form.submit()">
+                <option value="">All</option>
+            </select>
+        </div>
+
+        <div class="input-group w-auto">
+            <span class="input-group-text">Favorite: </span>
+            <select name="favorite" asp-items="@Model.FavoriteOptions" class="form-select w-auto"
+                onchange="this.form.submit()">
+            </select>
+        </div>
+
+        <input type="hidden" name="currentPage" value="1" />
+        <input type="hidden" name="pageSize" value="@Model.Metadata?.PageSize" />
+        <input type="hidden" name="sortColumn" value="@Model.SortColumn" />
+        <input type="hidden" name="sortOrder" value="@Model.SortOrder" />
+    </form>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    <a asp-page="./Index" class="sort-link @(Model.SortColumn == "name" ? "sort-active" : "")"
+                        asp-route-currentPage="@Model.Metadata?.Page" asp-route-pageSize="@Model.Metadata?.PageSize"
+                        asp-route-searchTerm="@Model.SearchTerm" asp-route-measurement="@Model.MeasurementFilter"
+                        asp-route-favorite="@Model.FavoriteFilter"
+                        asp-route-sortOrder="@(Model.SortColumn == "name" && Model.SortOrder == "asc" ? "desc" : "asc")"
+                        asp-route-sortColumn="name">
+                        Name
+                        @if (Model.SortColumn == "name")
+                        {
+                            <i class="bi @(Model.SortOrder == "asc" ? "bi-caret-up-fill" : "bi-caret-down-fill")">
+                            </i>
+                        }
+                    </a>
+                </th>
+                <th>
+                    <a asp-page="./Index" class="sort-link @(Model.SortColumn == "measurement" ? "sort-active" : "")"
+                        asp-route-currentPage="@Model.Metadata?.Page" asp-route-pageSize="@Model.Metadata?.PageSize"
+                        asp-route-searchTerm="@Model.SearchTerm" asp-route-measurement="@Model.MeasurementFilter"
+                        asp-route-favorite="@Model.FavoriteFilter"
+                        asp-route-sortOrder="@(Model.SortColumn == "measurement" && Model.SortOrder == "asc" ? "desc" : "asc")"
+                        asp-route-sortColumn="measurement">
+                        Measurement
+                        @if (Model.SortColumn == "measurement")
+                        {
+                            <i class="@(Model.SortOrder == "asc" ? "bi-caret-up-fill" : "bi-caret-down-fill")"></i>
+                        }
+                    </a>
+                </th>
+                <th>
+                    <a asp-page="./Index" class="sort-link @(Model.SortColumn == "favorite" ? "sort-active" : "")"
+                        asp-route-currentPage="@Model.Metadata?.Page" asp-route-pageSize="@Model.Metadata?.PageSize"
+                        asp-route-searchTerm="@Model.SearchTerm" asp-route-measurement="@Model.MeasurementFilter"
+                        asp-route-favorite="@Model.FavoriteFilter"
+                        asp-route-sortOrder="@(Model.SortColumn == "favorite" && Model.SortOrder == "asc" ? "desc" : "asc")"
+                        asp-route-sortColumn="favorite">
+                        Favorite
+                        @if (Model.SortColumn == "favorite")
+                        {
+                            <i class="@(Model.SortOrder == "asc" ? "bi-caret-up-fill" : "bi-caret-down-fill")"></i>
+                        }
+                    </a>
+                </th>
+                <th>
+                    <a asp-page="./Index" class="sort-link @(Model.SortColumn == "created" ? "sort-active" : "")"
+                        asp-route-currentPage="@Model.Metadata?.Page" asp-route-pageSize="@Model.Metadata?.PageSize"
+                        asp-route-searchTerm="@Model.SearchTerm" asp-route-measurement="@Model.MeasurementFilter"
+                        asp-route-favorite="@Model.FavoriteFilter"
+                        asp-route-sortOrder="@(Model.SortColumn == "created" && Model.SortOrder == "asc" ? "desc" : "asc")"
+                        asp-route-sortColumn="created">
+                        Created
+                        @if (Model.SortColumn == "created")
+                        {
+                            <i class="@(Model.SortOrder == "asc" ? "bi-caret-up-fill" : "bi-caret-down-fill")"></i>
+                        }
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var habit in Model.Habits)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(item => habit.Name)</td>
+                    <td>@Html.DisplayFor(item => habit.Measurement)</td>
+                    <td>
+                        @if (habit.Favorite)
+                        {
+                            <i class="bi bi-heart-fill text-danger"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-heart text-danger"></i>
+                        }
+                    </td>
+
+                    <td>@Html.DisplayFor(item => habit.CreatedAt)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    var start = Math.Max(1, Model.Metadata!.Page - 1);
+    var end = Math.Min(Model.Metadata!.TotalPages, Model.Metadata!.Page + 1);
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <ul class="pagination mb-0">
+            <li class="page-item @(Model.Metadata?.Page == 1 ? "disabled" : "")">
+                <a asp-page="./Index" asp-route-currentPage="1" asp-route-pageSize="@Model.Metadata?.PageSize"
+                    asp-route-searchTerm="@Model.SearchTerm" asp-route-measurement="@Model.MeasurementFilter"
+                    asp-route-favorite="@Model.FavoriteFilter" asp-route-sortColumn="@Model.SortColumn"
+                    asp-route-sortOrder="@Model.SortOrder" class="page-link"><i class="bi bi-skip-backward-fill"></i></a>
+            </li>
+            <li class="page-item @(!Model.Metadata!.HasPreviousPage ? "disabled" : "")">
+                <a asp-page="./Index" asp-route-currentPage="@(Model.Metadata?.Page - 1)"
+                    asp-route-pageSize="@Model.Metadata?.PageSize" asp-route-sortColumn="@Model.SortColumn"
+                    asp-route-searchTerm="@Model.SearchTerm" asp-route-measurement="@Model.MeasurementFilter"
+                    asp-route-favorite="@Model.FavoriteFilter" asp-route-sortOrder="@Model.SortOrder" class="page-link"><i
+                        class="bi bi-caret-left-fill"></i></a>
+            </li>
+            @for (var i = start; i <= end; i++)
+            {
+                <li class="page-item @(i == Model.Metadata?.Page ? "active" : "")">
+                    <a asp-page="./Index" asp-route-currentPage="@i" asp-route-pageSize="@Model.Metadata?.PageSize"
+                        asp-route-searchTerm="@Model.SearchTerm" asp-route-measurement="@Model.MeasurementFilter"
+                        asp-route-favorite="@Model.FavoriteFilter" asp-route-sortColumn="@Model.SortColumn"
+                        asp-route-sortOrder="@Model.SortOrder" class="page-link">@i</a>
+                </li>
+            }
+            <li class="page-item @(!Model.Metadata!.HasNextPage ? "disabled" : "")">
+                <a asp-page="./Index" asp-route-currentPage="@(Model.Metadata?.Page + 1)"
+                    asp-route-pageSize="@Model.Metadata?.PageSize" asp-route-sortColumn="@Model.SortColumn"
+                    asp-route-searchTerm="@Model.SearchTerm" asp-route-measurement="@Model.MeasurementFilter"
+                    asp-route-favorite="@Model.FavoriteFilter" asp-route-sortOrder="@Model.SortOrder" class="page-link"><i
+                        class="bi bi-caret-right-fill"></i></a>
+            </li>
+            <li
+                class="page-item @(Model.Metadata?.Page == Model.Metadata?.TotalPages || Model.Metadata?.TotalPages == 0 ? "disabled" : "")">
+                <a asp-page="./Index" asp-route-currentPage="@(Model.Metadata?.TotalPages)"
+                    asp-route-pageSize="@Model.Metadata?.PageSize" asp-route-sortColumn="@Model.SortColumn"
+                    asp-route-searchTerm="@Model.SearchTerm" asp-route-measurement="@Model.MeasurementFilter"
+                    asp-route-favorite="@Model.FavoriteFilter" asp-route-sortOrder="@Model.SortOrder" class="page-link"><i
+                        class="bi bi-skip-forward-fill"></i></a>
+            </li>
+        </ul>
+
+        <form asp-page="./Index" method="get" class="d-flex align-items-center">
+            <div class="input-group w-auto">
+                <span class="input-group-text">Page Size: </span>
+                <select name="pageSize" asp-items="Model.PageSizeOptions" class="form-select w-auto"
+                    onchange="this.form.submit()">
+                </select>
+
+                <input type="hidden" name="currentPage" value="@Model.Metadata?.Page" />
+                <input type="hidden" name="searchTerm" value="@Model.SearchTerm" />
+                <input type="hidden" name="sortColumn" value="@Model.SortColumn" />
+                <input type="hidden" name="sortOrder" value="@Model.SortOrder" />
+                <input type="hidden" name="measurement" value="@Model.MeasurementFilter" />
+                <input type="hidden" name="favorite" value="@Model.FavoriteFilter" />
+            </div>
+        </form>
+    </div>
+}

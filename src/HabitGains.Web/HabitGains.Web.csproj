@@ -4,12 +4,18 @@
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Core\" />
+        <Folder Include="Core\Constants\" />
         <Folder Include="Core\Extensions\" />
         <Folder Include="Core\Infrastructure\" />
+        <Folder Include="Pages\Habits\" />
+        <Folder Include="ViewModels\" />
+        <Folder Include="ViewModels\Habits\" />
+        <Folder Include="ViewModels\Shared\" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="Serilog.AspNetCore" />
-      <PackageReference Include="Serilog.Sinks.Console" />
-      <PackageReference Include="Serilog.Sinks.File" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+        <PackageReference Include="Serilog.AspNetCore" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="Serilog.Sinks.File" />
     </ItemGroup>
 </Project>

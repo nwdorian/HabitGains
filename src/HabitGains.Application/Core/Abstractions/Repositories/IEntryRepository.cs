@@ -1,6 +1,6 @@
 using HabitGains.Domain.Entries;
 
-namespace HabitGains.Application.Abstractions;
+namespace HabitGains.Application.Core.Abstractions.Repositories;
 
 public interface IEntryRepository
 {

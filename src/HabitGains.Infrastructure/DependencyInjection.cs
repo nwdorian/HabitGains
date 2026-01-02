@@ -1,4 +1,4 @@
-using HabitGains.Application.Abstractions;
+using HabitGains.Application.Core.Abstractions.Repositories;
 using HabitGains.Domain.Core.Abstractions;
 using HabitGains.Infrastructure.Database.ConnectionFactory;
 using HabitGains.Infrastructure.Database.Initializer;

@@ -1,4 +1,4 @@
-using HabitGains.Application.Abstractions;
+using HabitGains.Application.Core.Abstractions.Repositories;
 using HabitGains.Domain.Entries;
 using HabitGains.Domain.Habits;
 using HabitGains.Infrastructure.Database.Seeding.Fakers;
