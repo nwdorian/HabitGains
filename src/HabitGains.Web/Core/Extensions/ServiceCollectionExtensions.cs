@@ -1,3 +1,5 @@
+using FluentValidation;
+using HabitGains.Application.Core;
 using HabitGains.Infrastructure;
 using HabitGains.Infrastructure.Database.Seeding;
 using HabitGains.Web.Core.Infrastructure;
@@ -14,8 +16,11 @@ public static class ServiceCollectionExtensions
         services.AddRazorPages();
 
         services.AddInfrastructure(configuration);
+        services.AddApplication();
+
         services.AddCustomExceptionHandler();
         services.AddOptions();
+        services.AddFluentValidation();
 
         return services;
     }
@@ -32,5 +37,10 @@ public static class ServiceCollectionExtensions
             .BindConfiguration(SeedingSettings.ConfigurationSection)
             .ValidateDataAnnotations()
             .ValidateOnStart();
+    }
+
+    private static void AddFluentValidation(this IServiceCollection services)
+    {
+        services.AddValidatorsFromAssembly(typeof(Program).Assembly);
     }
 }

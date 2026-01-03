@@ -2,6 +2,7 @@
     <ItemGroup>
         <Folder Include="Core\" />
         <Folder Include="Core\Abstractions\" />
+        <Folder Include="Core\Primitives\" />
         <Folder Include="Entries\" />
         <Folder Include="Habits\" />
     </ItemGroup>
