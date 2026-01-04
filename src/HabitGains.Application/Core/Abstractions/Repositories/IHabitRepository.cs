@@ -13,7 +13,9 @@ public interface IHabitRepository
         CancellationToken cancellationToken
     );
     Task<int> Count(HabitFilter filter, CancellationToken cancellationToken);
+    Task Create(Habit habit, CancellationToken cancellationToken);
     Task<List<string>> GetHabitMeasurements(CancellationToken cancellationToken);
-    Task BulkInsert(List<Habit> habits);
+    Task<bool> IsNameUnique(string name, CancellationToken cancellationToken);
     Task<bool> Any();
+    Task BulkInsert(List<Habit> habits);
 }

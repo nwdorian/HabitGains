@@ -10,35 +10,41 @@
 
 @if (ModelState.IsValid)
 {
-    <form asp-page="./Index" method="get" class="d-flex gap-3">
-        <div class="input-group w-auto">
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control" placeholder="Search..." name="searchTerm" value="@Model.SearchTerm" />
-            <button type="submit" class="btn btn-primary">
-                Search
-            </button>
-        </div>
+    <div class="d-flex align-items-center gap-3">
+        <a asp-page="./Create" class="btn btn-primary"><i class="bi bi-plus-lg me-2"></i>Add habit</a>
+        <form asp-page="./Index" method="get" class="d-flex gap-3">
+            <div class="input-group w-auto">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" placeholder="Search..." name="searchTerm"
+                    value="@Model.SearchTerm" />
+                <button type="submit" class="btn btn-primary">
+                    Search
+                </button>
+            </div>
 
-        <div class="input-group w-auto">
-            <span class="input-group-text">Measurement: </span>
-            <select name="measurement" asp-items="Model.MeasurementOptions" class="form-select w-auto"
-                onchange="this.form.submit()">
-                <option value="">All</option>
-            </select>
-        </div>
+            <div class="input-group w-auto">
+                <span class="input-group-text">Measurement: </span>
+                <select name="measurement" asp-items="Model.MeasurementOptions" class="form-select w-auto"
+                    onchange="this.form.submit()">
+                    <option value="">All</option>
+                </select>
+            </div>
 
-        <div class="input-group w-auto">
-            <span class="input-group-text">Favorite: </span>
-            <select name="favorite" asp-items="@Model.FavoriteOptions" class="form-select w-auto"
-                onchange="this.form.submit()">
-            </select>
-        </div>
+            <div class="input-group w-auto">
+                <span class="input-group-text">Favorite: </span>
+                <select name="favorite" asp-items="@Model.FavoriteOptions" class="form-select w-auto"
+                    onchange="this.form.submit()">
+                </select>
+            </div>
 
-        <input type="hidden" name="currentPage" value="1" />
-        <input type="hidden" name="pageSize" value="@Model.Metadata.PageSize" />
-        <input type="hidden" name="sortColumn" value="@Model.SortColumn" />
-        <input type="hidden" name="sortOrder" value="@Model.SortOrder" />
-    </form>
+            <input type="hidden" name="currentPage" value="1" />
+            <input type="hidden" name="pageSize" value="@Model.Metadata.PageSize" />
+            <input type="hidden" name="sortColumn" value="@Model.SortColumn" />
+            <input type="hidden" name="sortOrder" value="@Model.SortOrder" />
+        </form>
+    </div>
+
+
 
     <table class="table">
         <thead>

@@ -3,7 +3,6 @@
         <ProjectReference Include="..\HabitGains.Domain\HabitGains.Domain.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Habits\" />
         <Folder Include="Habits\Get\" />
     </ItemGroup>
     <ItemGroup>

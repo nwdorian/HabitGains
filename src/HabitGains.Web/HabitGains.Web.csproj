@@ -8,8 +8,6 @@
         <Folder Include="Core\Extensions\" />
         <Folder Include="Core\Infrastructure\" />
         <Folder Include="Pages\Habits\" />
-        <Folder Include="ViewModels\" />
-        <Folder Include="ViewModels\Habits\" />
         <Folder Include="ViewModels\Shared\" />
     </ItemGroup>
     <ItemGroup>
