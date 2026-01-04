@@ -5,7 +5,7 @@ using HabitGains.Domain.Habits;
 
 namespace HabitGains.Application.Habits.Get;
 
-public sealed class GetHabits(IHabitRepository habitRepository)
+public sealed class GetHabitsHandler(IHabitRepository habitRepository)
 {
     public async Task<GetHabitsResponse> Handle(GetHabitsRequest request, CancellationToken cancellationToken)
     {

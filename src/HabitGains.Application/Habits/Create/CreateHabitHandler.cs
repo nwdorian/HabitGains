@@ -5,7 +5,7 @@ using HabitGains.Domain.Habits;
 
 namespace HabitGains.Application.Habits.Create;
 
-public class CreateHabit(IHabitRepository habitRepository, IDateTimeProvider dateTimeProvider)
+public class CreateHabitHandler(IHabitRepository habitRepository, IDateTimeProvider dateTimeProvider)
 {
     public async Task<Result> Handle(CreateHabitRequest request, CancellationToken cancellationToken)
     {
