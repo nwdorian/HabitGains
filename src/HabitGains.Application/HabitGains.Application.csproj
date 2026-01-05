@@ -3,6 +3,10 @@
         <ProjectReference Include="..\HabitGains.Domain\HabitGains.Domain.csproj" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Core\Extensions\" />
     </ItemGroup>
 </Project>

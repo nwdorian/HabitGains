@@ -3,7 +3,7 @@ namespace HabitGains.Domain.Core.Primitives;
 /// <summary>
 /// Represents a concrete domain error.
 /// </summary>
-public sealed record Error
+public record Error
 {
     /// <summary>
     /// Gets the empty error instance.
@@ -16,7 +16,7 @@ public sealed record Error
     /// <param name="code">The error code.</param>
     /// <param name="description">A human-readable description of the error.</param>
     /// <param name="type">The <see cref="ErrorType"/> indicating the category of the error.</param>
-    private Error(string code, string description, ErrorType type)
+    protected Error(string code, string description, ErrorType type)
     {
         Code = code;
         Description = description;

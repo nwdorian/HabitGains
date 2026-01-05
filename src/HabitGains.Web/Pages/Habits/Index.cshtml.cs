@@ -1,9 +1,6 @@
-using FluentValidation;
-using FluentValidation.Results;
 using HabitGains.Application.Core.Abstractions.Repositories;
 using HabitGains.Application.Habits.Get;
 using HabitGains.Web.Core.Constants;
-using HabitGains.Web.Core.Extensions;
 using HabitGains.Web.ViewModels.Habits;
 using HabitGains.Web.ViewModels.Shared;
 using Microsoft.AspNetCore.Mvc;
@@ -12,8 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HabitGains.Web.Pages.Habits;
 
-public class IndexModel(GetHabits useCase, IHabitRepository habitRepository, IValidator<GetHabitsQuery> validator)
-    : PageModel
+public class IndexModel(GetHabitsHandler useCase, IHabitRepository habitRepository) : PageModel
 {
     public required IReadOnlyList<HabitItem> Habits { get; set; }
     public Metadata Metadata { get; set; } = default!;
@@ -28,14 +24,6 @@ public class IndexModel(GetHabits useCase, IHabitRepository habitRepository, IVa
 
     public async Task<IActionResult> OnGetAsync(GetHabitsQuery query, CancellationToken cancellationToken = default)
     {
-        ValidationResult result = await validator.ValidateAsync(query, cancellationToken);
-
-        if (!result.IsValid)
-        {
-            result.AddToModelState(ModelState);
-            return Page();
-        }
-
         bool? favorite = query.Favorite switch
         {
             "true" => true,
