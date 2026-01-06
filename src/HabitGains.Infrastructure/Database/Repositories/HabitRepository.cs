@@ -81,6 +81,37 @@ public class HabitRepository(IDbConnectionFactory connectionFactory) : IHabitRep
         return reader.GetInt32(0);
     }
 
+    public async Task<Habit?> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        command.CommandText = """
+                SELECT Id, Name, Measurement, Favorite, CreatedAt, UpdatedAt
+                FROM habit 
+                WHERE Id = @Id
+            """;
+
+        command.Parameters.AddWithValue("Id", id);
+
+        using SqliteDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        if (!await reader.ReadAsync(cancellationToken))
+        {
+            return null;
+        }
+
+        return new Habit()
+        {
+            Id = reader.GetGuid(0),
+            Name = reader.GetString(1),
+            Measurement = reader.GetString(2),
+            Favorite = reader.GetBoolean(3),
+            CreatedAt = reader.GetDateTime(4),
+            UpdatedAt = await reader.IsDBNullAsync(5, cancellationToken) ? null : reader.GetDateTime(5),
+        };
+    }
+
     public async Task Create(Habit habit, CancellationToken cancellationToken)
     {
         using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
@@ -97,6 +128,18 @@ public class HabitRepository(IDbConnectionFactory connectionFactory) : IHabitRep
         command.Parameters.AddWithValue("@Favorite", habit.Favorite);
         command.Parameters.AddWithValue("@CreatedAt", habit.CreatedAt);
         command.Parameters.AddWithValue("@UpdatedAt", habit.UpdatedAt is null ? DBNull.Value : habit.UpdatedAt);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    public async Task Delete(Guid id, CancellationToken cancellationToken)
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        command.CommandText = "DELETE FROM habit WHERE Id = @Id";
+
+        command.Parameters.AddWithValue("Id", id);
 
         await command.ExecuteNonQueryAsync(cancellationToken);
     }

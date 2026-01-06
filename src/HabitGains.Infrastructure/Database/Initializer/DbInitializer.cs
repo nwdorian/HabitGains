@@ -32,6 +32,8 @@ public class DbInitializer(IDbConnectionFactory connectionFactory) : IDbInitiali
                 CreatedAt TEXT NOT NULL,
                 UpdatedAt TEXT NULL,
                 FOREIGN KEY (HabitId) REFERENCES habit(Id)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE
             )
             """;
 
