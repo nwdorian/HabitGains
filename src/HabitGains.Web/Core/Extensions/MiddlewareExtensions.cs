@@ -8,6 +8,8 @@ public static class MiddlewareExtensions
 {
     public static async Task<IApplicationBuilder> UseWebApplicationMiddleware(this WebApplication app)
     {
+        app.UseExceptionHandler();
+
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
