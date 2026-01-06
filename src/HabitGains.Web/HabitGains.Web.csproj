@@ -3,15 +3,11 @@
         <ProjectReference Include="..\HabitGains.Infrastructure\HabitGains.Infrastructure.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Core\" />
         <Folder Include="Core\Constants\" />
-        <Folder Include="Core\Extensions\" />
         <Folder Include="Core\Infrastructure\" />
-        <Folder Include="Pages\Habits\" />
         <Folder Include="ViewModels\Shared\" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
         <PackageReference Include="Serilog.AspNetCore" />
         <PackageReference Include="Serilog.Sinks.Console" />
         <PackageReference Include="Serilog.Sinks.File" />

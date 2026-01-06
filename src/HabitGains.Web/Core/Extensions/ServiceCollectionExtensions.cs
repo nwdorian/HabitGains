@@ -1,4 +1,3 @@
-using FluentValidation;
 using HabitGains.Application.Core;
 using HabitGains.Infrastructure;
 using HabitGains.Infrastructure.Database.Seeding;
@@ -20,7 +19,6 @@ public static class ServiceCollectionExtensions
 
         services.AddCustomExceptionHandler();
         services.AddOptions();
-        services.AddFluentValidation();
 
         return services;
     }
@@ -28,6 +26,13 @@ public static class ServiceCollectionExtensions
     private static void AddCustomExceptionHandler(this IServiceCollection services)
     {
         services.AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddProblemDetails(configure =>
+        {
+            configure.CustomizeProblemDetails = context =>
+            {
+                context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+            };
+        });
     }
 
     private static void AddOptions(this IServiceCollection services)
@@ -37,10 +42,5 @@ public static class ServiceCollectionExtensions
             .BindConfiguration(SeedingSettings.ConfigurationSection)
             .ValidateDataAnnotations()
             .ValidateOnStart();
-    }
-
-    private static void AddFluentValidation(this IServiceCollection services)
-    {
-        services.AddValidatorsFromAssembly(typeof(Program).Assembly);
     }
 }

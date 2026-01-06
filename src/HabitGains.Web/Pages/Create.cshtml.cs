@@ -1,5 +1,3 @@
-using FluentValidation;
-using FluentValidation.Results;
 using HabitGains.Application.Habits.Create;
 using HabitGains.Domain.Core.Primitives;
 using HabitGains.Web.Core.Extensions;
@@ -9,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace HabitGains.Web.Pages.Habits;
 
-public class CreateModel(CreateHabit useCase, IValidator<CreateHabitInput> validator) : PageModel
+public class CreateModel(CreateHabitHandler useCase) : PageModel
 {
     [BindProperty]
     public CreateHabitInput Input { get; set; } = default!;
@@ -21,11 +19,8 @@ public class CreateModel(CreateHabit useCase, IValidator<CreateHabitInput> valid
 
     public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
-        ValidationResult result = await validator.ValidateAsync(Input, cancellationToken);
-
-        if (!result.IsValid)
+        if (!ModelState.IsValid)
         {
-            result.AddToModelState(ModelState);
             return Page();
         }
 
@@ -35,7 +30,7 @@ public class CreateModel(CreateHabit useCase, IValidator<CreateHabitInput> valid
 
         if (response.IsFailure)
         {
-            ModelState.AddModelError(response.Error.GetProperty(), response.Error.Description);
+            ModelState.AddErrors<CreateHabitInput>(response.Error, nameof(Input));
             return Page();
         }
 

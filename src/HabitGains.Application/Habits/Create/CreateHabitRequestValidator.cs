@@ -1,10 +1,10 @@
 using FluentValidation;
 
-namespace HabitGains.Web.ViewModels.Habits;
+namespace HabitGains.Application.Habits.Create;
 
-public class CreateHabitInputValidator : AbstractValidator<CreateHabitInput>
+public class CreateHabitRequestValidator : AbstractValidator<CreateHabitRequest>
 {
-    public CreateHabitInputValidator()
+    public CreateHabitRequestValidator()
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(100).MinimumLength(3);
         RuleFor(x => x.Measurement).NotEmpty().MaximumLength(50);
