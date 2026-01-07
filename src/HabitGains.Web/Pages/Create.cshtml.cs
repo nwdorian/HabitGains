@@ -11,6 +11,7 @@ public class CreateModel(CreateHabitHandler useCase) : PageModel
 {
     [BindProperty]
     public CreateHabitInput Input { get; set; } = default!;
+    public List<string> Errors { get; set; } = [];
 
     public IActionResult OnGet()
     {
@@ -30,7 +31,7 @@ public class CreateModel(CreateHabitHandler useCase) : PageModel
 
         if (response.IsFailure)
         {
-            ModelState.AddErrors<CreateHabitInput>(response.Error, nameof(Input));
+            Errors.AddRange(response.GetErrors());
             return Page();
         }
 
