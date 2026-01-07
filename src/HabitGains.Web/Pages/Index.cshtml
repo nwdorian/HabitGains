@@ -42,8 +42,12 @@
             <input type="hidden" name="sortColumn" value="@Model.SortColumn" />
             <input type="hidden" name="sortOrder" value="@Model.SortOrder" />
         </form>
+        <a asp-page="./Index" asp-route-currentPage="1" asp-route-pageSize="@Model.Metadata.PageSize"
+            asp-route-sortColumn="@Model.SortColumn" asp-route-sortOrder="@Model.SortOrder" class="btn btn-secondary"><i
+                class="bi bi-x-circle"></i>
+            Clear filters
+        </a>
     </div>
-
 
 
     <table class="table">
@@ -106,6 +110,7 @@
                         }
                     </a>
                 </th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -126,6 +131,12 @@
                     </td>
 
                     <td>@Html.DisplayFor(item => habit.CreatedAt)</td>
+                    <td class="align-bottom">
+                        <a asp-page="./Edit" asp-route-id="@habit.Id" class="btn btn-warning btn-sm"><i
+                                class="bi bi-pencil-square"></i></a>
+                        <a asp-page="./Delete" asp-route-id="@habit.Id" class="btn btn-danger btn-sm"><i
+                                class="bi bi-trash3"></i></a>
+                    </td>
                 </tr>
             }
         </tbody>
