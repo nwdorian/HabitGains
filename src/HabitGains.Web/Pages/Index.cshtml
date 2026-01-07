@@ -6,9 +6,12 @@
 
 <h1>Habits</h1>
 
-<div asp-validation-summary="All" class="text-danger"></div>
-
-@if (ModelState.IsValid)
+@if (Model.Errors.Any())
+{
+    <partial name="_ErrorSummary" model="Model.Errors" />
+    <a asp-page="./Index" class="btn btn-danger">Back to list</a>
+}
+else
 {
     <div class="d-flex align-items-center gap-3">
         <a asp-page="./Create" class="btn btn-primary"><i class="bi bi-plus-lg me-2"></i>Add habit</a>

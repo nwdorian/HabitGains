@@ -1,6 +1,8 @@
 using HabitGains.Application.Core.Abstractions.Repositories;
 using HabitGains.Application.Habits.Get;
+using HabitGains.Domain.Core.Primitives;
 using HabitGains.Web.Core.Constants;
+using HabitGains.Web.Core.Extensions;
 using HabitGains.Web.ViewModels.Habits;
 using HabitGains.Web.ViewModels.Shared;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +13,7 @@ namespace HabitGains.Web.Pages.Habits;
 
 public class IndexModel(GetHabitsHandler useCase, IHabitRepository habitRepository) : PageModel
 {
-    public required IReadOnlyList<HabitItem> Habits { get; set; }
+    public IReadOnlyList<HabitItem> Habits { get; set; } = default!;
     public Metadata Metadata { get; set; } = default!;
     public SelectList PageSizeOptions { get; set; } = default!;
     public SelectList MeasurementOptions { get; set; } = default!;
@@ -21,6 +23,7 @@ public class IndexModel(GetHabitsHandler useCase, IHabitRepository habitReposito
     public string? SearchTerm { get; set; }
     public string? MeasurementFilter { get; set; }
     public string? FavoriteFilter { get; set; }
+    public List<string> Errors { get; set; } = [];
 
     public async Task<IActionResult> OnGetAsync(GetHabitsQuery query, CancellationToken cancellationToken = default)
     {
@@ -41,19 +44,25 @@ public class IndexModel(GetHabitsHandler useCase, IHabitRepository habitReposito
             query.SortOrder
         );
 
-        GetHabitsResponse response = await useCase.Handle(request, cancellationToken);
+        Result<GetHabitsResponse> response = await useCase.Handle(request, cancellationToken);
+
+        if (response.IsFailure)
+        {
+            Errors.AddRange(response.GetErrors());
+            return Page();
+        }
 
         Habits = response
-            .Items.Select(h => new HabitItem(h.Id, h.Name, h.Measurement, h.Favorite, h.CreatedAt))
+            .Value.Items.Select(h => new HabitItem(h.Id, h.Name, h.Measurement, h.Favorite, h.CreatedAt))
             .ToList();
 
         Metadata = new Metadata(
-            response.Page,
-            response.PageSize,
-            response.TotalCount,
-            response.TotalPages,
-            response.HasPreviousPage,
-            response.HasNextPage
+            response.Value.Page,
+            response.Value.PageSize,
+            response.Value.TotalCount,
+            response.Value.TotalPages,
+            response.Value.HasPreviousPage,
+            response.Value.HasNextPage
         );
 
         SortColumn = query.SortColumn;
