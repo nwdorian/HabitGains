@@ -11,5 +11,6 @@ public class HabitItem(Guid id, string name, string measurement, bool favorite, 
 
     [DataType(DataType.Date)]
     [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy H:mm}")]
+    [Display(Name = "Created")]
     public DateTime CreatedAt { get; } = createdAt;
 }
