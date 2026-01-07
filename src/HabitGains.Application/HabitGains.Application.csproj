@@ -8,5 +8,6 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Core\Extensions\" />
+      <Folder Include="Habits\Delete\" />
     </ItemGroup>
 </Project>
