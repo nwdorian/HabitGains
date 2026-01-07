@@ -1,17 +1,14 @@
 using FluentValidation;
 
-namespace HabitGains.Web.ViewModels.Habits;
+namespace HabitGains.Application.Habits.Get;
 
-public class GetHabitsQueryValidator : AbstractValidator<GetHabitsQuery>
+public class GetHabitsRequestValidator : AbstractValidator<GetHabitsRequest>
 {
     private static readonly string[] _allowedSortColumns = { "name", "measurement", "favorite", "created" };
 
-    public GetHabitsQueryValidator()
+    public GetHabitsRequestValidator()
     {
-        RuleFor(x => x.CurrentPage)
-            .GreaterThanOrEqualTo(1)
-            .WithMessage("Page must be greater than zero.")
-            .LessThan(1000);
+        RuleFor(x => x.Page).GreaterThanOrEqualTo(1).WithMessage("Page must be greater than zero.").LessThan(1000);
         RuleFor(x => x.PageSize)
             .GreaterThanOrEqualTo(3)
             .WithMessage("Page size must be greater than or equal to 3.")
