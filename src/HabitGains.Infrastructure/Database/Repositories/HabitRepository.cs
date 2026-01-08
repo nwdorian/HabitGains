@@ -160,6 +160,8 @@ public class HabitRepository(IDbConnectionFactory connectionFactory) : IHabitRep
         command.Parameters.AddWithValue("@Measurement", habit.Measurement);
         command.Parameters.AddWithValue("@Favorite", habit.Favorite);
         command.Parameters.AddWithValue("@UpdatedAt", habit.UpdatedAt);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
     public async Task<bool> IsNameUnique(string name, CancellationToken cancellationToken)

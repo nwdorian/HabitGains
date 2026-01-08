@@ -5,7 +5,7 @@ using HabitGains.Web.ViewModels.Habits;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace HabitGains.Web.Pages.Habits;
+namespace HabitGains.Web.Pages;
 
 public class CreateModel(CreateHabitHandler useCase) : PageModel
 {

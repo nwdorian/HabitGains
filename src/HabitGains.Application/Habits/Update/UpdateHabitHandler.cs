@@ -30,7 +30,10 @@ public class UpdateHabitHandler(
             return HabitErrors.NotFoundById(request.Id);
         }
 
-        if (!await habitRepository.IsNameUnique(request.Name, cancellationToken))
+        if (
+            !string.Equals(habit.Name, request.Name, StringComparison.OrdinalIgnoreCase)
+            && !await habitRepository.IsNameUnique(request.Name, cancellationToken)
+        )
         {
             return HabitErrors.NameNotUnique(request.Name);
         }

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace HabitGains.Web.Pages.Habits;
+namespace HabitGains.Web.Pages;
 
 public class IndexModel(GetHabitsHandler useCase, IHabitRepository habitRepository) : PageModel
 {
