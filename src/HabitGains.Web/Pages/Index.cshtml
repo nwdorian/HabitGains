@@ -52,8 +52,7 @@ else
         </a>
     </div>
 
-
-    <table class="table">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>
@@ -119,25 +118,17 @@ else
         <tbody>
             @foreach (var habit in Model.Habits)
             {
-                <tr>
+                <tr class="clickable-row" data-href="@Url.Page("./Details", new { id = habit.Id })">
                     <td>@Html.DisplayFor(item => habit.Name)</td>
                     <td class="text-center">@Html.DisplayFor(item => habit.Measurement)</td>
                     <td class="text-center">
-                        @if (habit.Favorite)
-                        {
-                            <i class="bi bi-heart-fill text-danger"></i>
-                        }
-                        else
-                        {
-                            <i class="bi bi-heart text-danger"></i>
-                        }
+                        <i class="bi @(habit.Favorite ? "bi-heart-fill" : "bi-heart") text-danger"></i>
                     </td>
-
                     <td class="text-center">@Html.DisplayFor(item => habit.CreatedAt)</td>
                     <td class="text-end">
-                        <a asp-page="./Edit" asp-route-id="@habit.Id" class="btn btn-warning btn-sm"><i
+                        <a asp-page="./Edit" asp-route-id="@habit.Id" class="btn btn-warning btn-sm option-btn"><i
                                 class="bi bi-pencil-square"></i></a>
-                        <a asp-page="./Delete" asp-route-id="@habit.Id" class="btn btn-danger btn-sm"><i
+                        <a asp-page="./Delete" asp-route-id="@habit.Id" class="btn btn-danger btn-sm option-btn"><i
                                 class="bi bi-trash3"></i></a>
                     </td>
                 </tr>
@@ -200,4 +191,8 @@ else
             </div>
         </form>
     </div>
+}
+
+@section Scripts {
+    <script src="~/Pages/Index.cshtml.js"></script>
 }

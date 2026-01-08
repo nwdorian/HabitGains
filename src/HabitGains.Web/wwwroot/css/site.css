@@ -57,3 +57,7 @@ body {
   color: var(--bs-primary);
   font-weight: 600;
 }
+
+.clickable-row {
+  cursor: pointer;
+}
