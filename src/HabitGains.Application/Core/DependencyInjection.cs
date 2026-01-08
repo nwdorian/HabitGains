@@ -3,6 +3,7 @@ using HabitGains.Application.Habits.Create;
 using HabitGains.Application.Habits.Delete;
 using HabitGains.Application.Habits.Get;
 using HabitGains.Application.Habits.GetById;
+using HabitGains.Application.Habits.Update;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HabitGains.Application.Core;
@@ -23,6 +24,7 @@ public static class DependencyInjection
         services.AddScoped<GetHabitByIdHandler>();
         services.AddScoped<CreateHabitHandler>();
         services.AddScoped<DeleteHabitHandler>();
+        services.AddScoped<UpdateHabitHandler>();
     }
 
     private static void AddFluentValidation(this IServiceCollection services)

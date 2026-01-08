@@ -144,6 +144,26 @@ public class HabitRepository(IDbConnectionFactory connectionFactory) : IHabitRep
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    public async Task Update(Habit habit, CancellationToken cancellationToken)
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        command.CommandText = """
+            UPDATE habit
+            SET Name = @Name, Measurement = @Measurement, Favorite = @Favorite, UpdatedAt = @UpdatedAt 
+            WHERE Id = @Id
+            """;
+
+        command.Parameters.AddWithValue("@Id", habit.Id);
+        command.Parameters.AddWithValue("@Name", habit.Name);
+        command.Parameters.AddWithValue("@Measurement", habit.Measurement);
+        command.Parameters.AddWithValue("@Favorite", habit.Favorite);
+        command.Parameters.AddWithValue("@UpdatedAt", habit.UpdatedAt);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task<bool> IsNameUnique(string name, CancellationToken cancellationToken)
     {
         using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
