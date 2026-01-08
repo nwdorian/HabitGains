@@ -71,7 +71,7 @@ else
                         }
                     </a>
                 </th>
-                <th>
+                <th class="text-center">
                     <a asp-page="./Index" class="sort-link @(Model.SortColumn == "measurement" ? "sort-active" : "")"
                         asp-route-currentPage="@Model.Metadata.Page" asp-route-pageSize="@Model.Metadata.PageSize"
                         asp-route-searchTerm="@Model.SearchTerm" asp-route-measurement="@Model.MeasurementFilter"
@@ -85,7 +85,7 @@ else
                         }
                     </a>
                 </th>
-                <th>
+                <th class="text-center">
                     <a asp-page="./Index" class="sort-link @(Model.SortColumn == "favorite" ? "sort-active" : "")"
                         asp-route-currentPage="@Model.Metadata.Page" asp-route-pageSize="@Model.Metadata.PageSize"
                         asp-route-searchTerm="@Model.SearchTerm" asp-route-measurement="@Model.MeasurementFilter"
@@ -99,7 +99,7 @@ else
                         }
                     </a>
                 </th>
-                <th>
+                <th class="text-center">
                     <a asp-page="./Index" class="sort-link @(Model.SortColumn == "created" ? "sort-active" : "")"
                         asp-route-currentPage="@Model.Metadata.Page" asp-route-pageSize="@Model.Metadata.PageSize"
                         asp-route-searchTerm="@Model.SearchTerm" asp-route-measurement="@Model.MeasurementFilter"
@@ -113,7 +113,7 @@ else
                         }
                     </a>
                 </th>
-                <th></th>
+                <th class="text-end"></th>
             </tr>
         </thead>
         <tbody>
@@ -121,8 +121,8 @@ else
             {
                 <tr>
                     <td>@Html.DisplayFor(item => habit.Name)</td>
-                    <td>@Html.DisplayFor(item => habit.Measurement)</td>
-                    <td>
+                    <td class="text-center">@Html.DisplayFor(item => habit.Measurement)</td>
+                    <td class="text-center">
                         @if (habit.Favorite)
                         {
                             <i class="bi bi-heart-fill text-danger"></i>
@@ -133,8 +133,8 @@ else
                         }
                     </td>
 
-                    <td>@Html.DisplayFor(item => habit.CreatedAt)</td>
-                    <td class="align-bottom">
+                    <td class="text-center">@Html.DisplayFor(item => habit.CreatedAt)</td>
+                    <td class="text-end">
                         <a asp-page="./Edit" asp-route-id="@habit.Id" class="btn btn-warning btn-sm"><i
                                 class="bi bi-pencil-square"></i></a>
                         <a asp-page="./Delete" asp-route-id="@habit.Id" class="btn btn-danger btn-sm"><i
