@@ -144,7 +144,7 @@ public class HabitRepository(IDbConnectionFactory connectionFactory) : IHabitRep
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    public async Task Update(Guid id, Habit habit, CancellationToken cancellationToken)
+    public async Task Update(Habit habit, CancellationToken cancellationToken)
     {
         using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
         using SqliteCommand command = connection.CreateCommand();
