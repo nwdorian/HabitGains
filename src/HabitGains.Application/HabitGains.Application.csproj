@@ -8,6 +8,8 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Core\Extensions\" />
+      <Folder Include="Entries\" />
+      <Folder Include="Entries\GetByHabitId\" />
       <Folder Include="Habits\Delete\" />
       <Folder Include="Habits\Update\" />
     </ItemGroup>

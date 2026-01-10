@@ -24,7 +24,7 @@ public sealed class GetHabitsHandler(IHabitRepository habitRepository, IValidato
         HabitSorting sorting = new(request.SortColumn, request.SortOrder);
         Paging paging = new(request.Page, request.PageSize);
 
-        int count = await habitRepository.Count(filter, cancellationToken);
+        int count = await habitRepository.CountHabits(filter, cancellationToken);
         IReadOnlyList<Habit> habits = await habitRepository.GetHabitsPage(filter, sorting, paging, cancellationToken);
 
         PagedList<HabitResponse> pagedList = new(

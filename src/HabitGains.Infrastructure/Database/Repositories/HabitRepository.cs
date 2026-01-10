@@ -3,9 +3,7 @@ using System.Globalization;
 using System.Text;
 using HabitGains.Application.Core.Abstractions.Repositories;
 using HabitGains.Application.Core.Pagination;
-using HabitGains.Application.Core.Pagination.Entries;
 using HabitGains.Application.Core.Pagination.Habits;
-using HabitGains.Domain.Entries;
 using HabitGains.Domain.Habits;
 using HabitGains.Infrastructure.Database.ConnectionFactory;
 using Microsoft.Data.Sqlite;
@@ -60,7 +58,7 @@ public class HabitRepository(IDbConnectionFactory connectionFactory) : IHabitRep
         return habits;
     }
 
-    public async Task<int> Count(HabitFilter filter, CancellationToken cancellationToken)
+    public async Task<int> CountHabits(HabitFilter filter, CancellationToken cancellationToken)
     {
         using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
         using SqliteCommand command = connection.CreateCommand();
@@ -74,97 +72,6 @@ public class HabitRepository(IDbConnectionFactory connectionFactory) : IHabitRep
         );
 
         ApplyFilter(query, command, filter);
-
-        command.CommandText = query.ToString();
-
-        using SqliteDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
-
-        await reader.ReadAsync(cancellationToken);
-        return reader.GetInt32(0);
-    }
-
-    public async Task<Habit?> GetByIdWithEntriesPage(
-        Guid id,
-        EntryFilter filter,
-        EntrySorting sorting,
-        Paging paging,
-        CancellationToken cancellationToken
-    )
-    {
-        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
-        using SqliteCommand command = connection.CreateCommand();
-
-        StringBuilder query = new(
-            """
-            SELECT h.Id, h.Name, h.Measurement, h.Favorite, h.CreatedAt, h.UpdatedAt, e.Id, e.HabitId, e.Date, e.Quantity, e.CreatedAt, e.UpdatedAt
-            FROM habit AS h
-            INNER JOIN Entry AS e
-                ON h.Id = e.HabitId
-            WHERE h.Id = @Id
-            """
-        );
-
-        ApplyEntryFilter(query, command, filter);
-        ApplyEntrySorting(query, sorting);
-        ApplyPaging(query, command, paging);
-
-        command.CommandText = query.ToString();
-
-        using SqliteDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
-
-        if (!await reader.ReadAsync(cancellationToken))
-        {
-            return null;
-        }
-
-        Habit habit = new()
-        {
-            Id = reader.GetGuid(0),
-            Name = reader.GetString(1),
-            Measurement = reader.GetString(2),
-            Favorite = reader.GetBoolean(3),
-            CreatedAt = reader.GetDateTime(4),
-            UpdatedAt = await reader.IsDBNullAsync(5, cancellationToken) ? null : reader.GetDateTime(5),
-        };
-
-        List<Entry> entries = new();
-
-        while (await reader.ReadAsync(cancellationToken))
-        {
-            Entry entry = new()
-            {
-                Id = reader.GetGuid(6),
-                HabitId = reader.GetGuid(7),
-                Date = reader.GetDateTime(8),
-                Quantity = reader.GetDecimal(9),
-                CreatedAt = reader.GetDateTime(10),
-                UpdatedAt = await reader.IsDBNullAsync(5, cancellationToken) ? null : reader.GetDateTime(5),
-            };
-
-            entries.Add(entry);
-        }
-
-        habit.Entries = entries;
-
-        return habit;
-    }
-
-    public async Task<int> CountWithEntries(Guid id, EntryFilter filter, CancellationToken cancellationToken)
-    {
-        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
-        using SqliteCommand command = connection.CreateCommand();
-
-        StringBuilder query = new(
-            """
-            SELECT h.Id, h.Name, h.Measurement, h.Favorite, h.CreatedAt, h.UpdatedAt, e.Id, e.HabitId, e.Date, e.Quantity, e.CreatedAt, e.UpdatedAt
-            FROM habit AS h
-            INNER JOIN Entry AS e
-                ON h.Id = e.HabitId
-            WHERE h.Id = @Id
-            """
-        );
-
-        ApplyEntryFilter(query, command, filter);
 
         command.CommandText = query.ToString();
 
@@ -358,38 +265,6 @@ public class HabitRepository(IDbConnectionFactory connectionFactory) : IHabitRep
     }
 
     private static void ApplySorting(StringBuilder query, HabitSorting sorting)
-    {
-        query.Append(CultureInfo.InvariantCulture, $" ORDER BY {sorting.SortColumn} {sorting.SortOrder}");
-    }
-
-    private static void ApplyEntryFilter(StringBuilder query, SqliteCommand command, EntryFilter filter)
-    {
-        if (filter.QuantityFrom is not null)
-        {
-            query.Append(" AND Quantity > @QuantityFrom");
-            command.Parameters.AddWithValue("QuantityFrom", filter.QuantityFrom);
-        }
-
-        if (filter.QuantityTo is not null)
-        {
-            query.Append(" AND Quantity < @QuantityTo");
-            command.Parameters.AddWithValue("QuantityTo", filter.QuantityTo);
-        }
-
-        if (filter.DateFrom is not null)
-        {
-            query.Append(" AND Date > @DateFrom");
-            command.Parameters.AddWithValue("@DateFrom", filter.DateFrom);
-        }
-
-        if (filter.DateTo is not null)
-        {
-            query.Append(" AND Date < @DateTo");
-            command.Parameters.AddWithValue("@DateTo", filter.DateTo);
-        }
-    }
-
-    private static void ApplyEntrySorting(StringBuilder query, EntrySorting sorting)
     {
         query.Append(CultureInfo.InvariantCulture, $" ORDER BY {sorting.SortColumn} {sorting.SortOrder}");
     }
