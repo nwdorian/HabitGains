@@ -1,3 +1,3 @@
 namespace HabitGains.Application.Core.Pagination.Entries;
 
-public record EntryFilter(int? QuantityFrom, int? QuantityTo, DateTime? DateFrom, DateTime? DateTo);
+public record EntryFilter(decimal? QuantityFrom, decimal? QuantityTo, DateTime? DateFrom, DateTime? DateTo);

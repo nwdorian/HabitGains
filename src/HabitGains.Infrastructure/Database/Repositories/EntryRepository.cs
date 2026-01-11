@@ -68,7 +68,7 @@ public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRep
 
         StringBuilder query = new(
             """
-            SELECT Id, HabitId, Date, Quantity, CreatedAt, UpdatedAt
+            SELECT Count(*)
             FROM entry
             WHERE HabitId = @HabitId
             """
@@ -84,6 +84,35 @@ public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRep
 
         await reader.ReadAsync(cancellationToken);
         return reader.GetInt32(0);
+    }
+
+    public async Task<decimal> GetTotalQuantityByHabitId(
+        Guid habitId,
+        EntryFilter filter,
+        CancellationToken cancellationToken
+    )
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        StringBuilder query = new(
+            """
+            SELECT SUM(Quantity)
+            FROM entry
+            WHERE HabitId = @HabitId
+            """
+        );
+
+        ApplyEntryFilter(query, command, filter);
+
+        command.CommandText = query.ToString();
+
+        command.Parameters.AddWithValue("@HabitId", habitId);
+
+        using SqliteDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        await reader.ReadAsync(cancellationToken);
+        return await reader.IsDBNullAsync(0, cancellationToken) ? 0 : reader.GetDecimal(0);
     }
 
     public async Task BulkInsert(List<Entry> entries)

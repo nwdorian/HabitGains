@@ -2,8 +2,8 @@ namespace HabitGains.Application.Entries.GetByHabitId;
 
 public record GetEntriesByHabitIdRequest(
     Guid HabitId,
-    int? QuantityFrom,
-    int? QuantityTo,
+    decimal? QuantityFrom,
+    decimal? QuantityTo,
     DateTime? DateFrom,
     DateTime? DateTo,
     int Page,

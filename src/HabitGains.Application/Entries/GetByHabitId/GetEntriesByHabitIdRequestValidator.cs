@@ -4,7 +4,7 @@ namespace HabitGains.Application.Entries.GetByHabitId;
 
 public class GetEntriesByHabitIdRequestValidator : AbstractValidator<GetEntriesByHabitIdRequest>
 {
-    private static readonly string[] _allowedSortColumns = { "quantity", "date" };
+    private static readonly string[] _allowedSortColumns = { "quantity", "date", "created" };
 
     public GetEntriesByHabitIdRequestValidator()
     {
@@ -18,7 +18,5 @@ public class GetEntriesByHabitIdRequestValidator : AbstractValidator<GetEntriesB
         RuleFor(x => x.SortOrder).Must(o => o is "asc" or "desc").WithMessage("Sort order must be 'asc' or 'desc'.");
         RuleFor(x => x.QuantityFrom).GreaterThan(0).WithMessage("Quantity must be greater than zero.");
         RuleFor(x => x.QuantityTo).GreaterThan(0).WithMessage("Quantity must be greater than zero.");
-        RuleFor(x => x.DateFrom).Must(date => date != default).WithMessage("Invalid date!");
-        RuleFor(x => x.DateTo).Must(date => date != default).WithMessage("Invalid date!");
     }
 }

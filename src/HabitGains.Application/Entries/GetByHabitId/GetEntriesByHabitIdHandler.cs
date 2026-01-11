@@ -39,7 +39,11 @@ public class GetEntriesByHabitIdHandler(
             cancellationToken
         );
 
-        decimal totalQuantity = entries.Sum(e => e.Quantity);
+        decimal totalQuantity = await entryRepository.GetTotalQuantityByHabitId(
+            request.HabitId,
+            filter,
+            cancellationToken
+        );
 
         PagedList<EntryResponse> pagedList = new(
             entries.Select(e => new EntryResponse(e.Id, e.HabitId, e.Date, e.Quantity, e.CreatedAt)).ToList(),
