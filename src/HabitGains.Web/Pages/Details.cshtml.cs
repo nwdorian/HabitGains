@@ -1,4 +1,6 @@
+using System.Globalization;
 using HabitGains.Application.Entries.GetByHabitId;
+using HabitGains.Application.Entries.GetForChart;
 using HabitGains.Application.Habits;
 using HabitGains.Application.Habits.GetById;
 using HabitGains.Domain.Core.Primitives;
@@ -13,11 +15,17 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HabitGains.Web.Pages;
 
-public class DetailsModel(GetHabitByIdHandler getHabit, GetEntriesByHabitIdHandler getEntries) : PageModel
+public class DetailsModel(
+    GetHabitByIdHandler getHabit,
+    GetEntriesByHabitIdHandler getEntries,
+    GetEntriesForChartHandler getChartEntries
+) : PageModel
 {
     public IReadOnlyList<EntryItem> Entries { get; set; } = default!;
+    public EntryChartData EntryChartData { get; set; } = default!;
     public Metadata Metadata { get; set; } = default!;
     public HabitItem Habit { get; set; } = default!;
+    public decimal TotalQuantity { get; set; }
     public SelectList PageSizeOptions { get; set; } = default!;
     public string? SortColumn { get; set; }
     public string? SortOrder { get; set; }
@@ -66,6 +74,7 @@ public class DetailsModel(GetHabitByIdHandler getHabit, GetEntriesByHabitIdHandl
             query.SortColumn,
             query.SortOrder
         );
+
         Result<GetEntriesByHabitIdResponse> getEntriesResponse = await getEntries.Handle(
             getEntriesRequest,
             cancellationToken
@@ -80,6 +89,8 @@ public class DetailsModel(GetHabitByIdHandler getHabit, GetEntriesByHabitIdHandl
         Entries = getEntriesResponse
             .Value.Items.Select(e => new EntryItem(e.Id, e.HabitId, e.Date, e.Quantity))
             .ToList();
+
+        TotalQuantity = getEntriesResponse.Value.TotalQuantity;
 
         Metadata = new Metadata(
             getEntriesResponse.Value.Page,
@@ -98,6 +109,27 @@ public class DetailsModel(GetHabitByIdHandler getHabit, GetEntriesByHabitIdHandl
         DateToFilter = query.DateTo;
         QuantityFromFilter = query.QuantityFrom;
         QuantityToFilter = query.QuantityTo;
+
+        GetEntriesForChartRequest getChartEntriesRequest = new(
+            id.Value,
+            query.QuantityFrom,
+            query.QuantityTo,
+            query.DateFrom,
+            query.DateTo
+        );
+
+        GetEntriesForChartResponse getChartEntriesResponse = await getChartEntries.Handle(
+            getChartEntriesRequest,
+            cancellationToken
+        );
+
+        EntryChartData = new EntryChartData()
+        {
+            Labels = getChartEntriesResponse
+                .Entries.Select(e => e.Date.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture))
+                .ToList(),
+            Values = getChartEntriesResponse.Entries.Select(e => e.Quantity).ToList(),
+        };
 
         return Page();
     }

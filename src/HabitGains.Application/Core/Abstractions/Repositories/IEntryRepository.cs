@@ -15,6 +15,11 @@ public interface IEntryRepository
     );
     Task<int> CountEntriesByHabitId(Guid habitId, EntryFilter filter, CancellationToken cancellationToken);
     Task<decimal> GetTotalQuantityByHabitId(Guid habitId, EntryFilter filter, CancellationToken cancellationToken);
+    Task<IReadOnlyList<Entry>> GetEntriesForChart(
+        Guid habitId,
+        EntryFilter filter,
+        CancellationToken cancellationToken
+    );
     Task BulkInsert(List<Entry> entries);
     Task<bool> Any();
 }

@@ -115,6 +115,51 @@ public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRep
         return await reader.IsDBNullAsync(0, cancellationToken) ? 0 : reader.GetDecimal(0);
     }
 
+    public async Task<IReadOnlyList<Entry>> GetEntriesForChart(
+        Guid habitId,
+        EntryFilter filter,
+        CancellationToken cancellationToken
+    )
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        StringBuilder query = new(
+            """
+                SELECT Id, HabitId, Date, Quantity, CreatedAt, UpdatedAt
+                FROM entry
+                WHERE HabitId = @HabitId
+            """
+        );
+
+        ApplyEntryFilter(query, command, filter);
+
+        command.CommandText = query.ToString();
+
+        command.Parameters.AddWithValue("@HabitId", habitId);
+
+        using SqliteDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        List<Entry> entries = new();
+
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            Entry entry = new()
+            {
+                Id = reader.GetGuid(0),
+                HabitId = reader.GetGuid(1),
+                Date = reader.GetDateTime(2),
+                Quantity = reader.GetDecimal(3),
+                CreatedAt = reader.GetDateTime(4),
+                UpdatedAt = await reader.IsDBNullAsync(5, cancellationToken) ? null : reader.GetDateTime(5),
+            };
+
+            entries.Add(entry);
+        }
+
+        return entries;
+    }
+
     public async Task BulkInsert(List<Entry> entries)
     {
         using SqliteConnection connection = await connectionFactory.CreateConnectionAsync();
