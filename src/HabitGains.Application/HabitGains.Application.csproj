@@ -9,6 +9,7 @@
     <ItemGroup>
       <Folder Include="Core\Extensions\" />
       <Folder Include="Entries\" />
+      <Folder Include="Entries\Create\" />
       <Folder Include="Entries\GetByHabitId\" />
       <Folder Include="Entries\GetForChart\" />
       <Folder Include="Habits\Delete\" />

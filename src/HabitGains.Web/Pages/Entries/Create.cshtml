@@ -14,9 +14,9 @@ else
 
     <div class="row">
         <div class="col-md-4">
-            @if (Model.EntryFormErrors.Any())
+            @if (Model.CreateEntryErrors.Any())
             {
-                <partial name="_ErrorSummary" model="Model.EntryFormErrors" />
+                <partial name="_ErrorSummary" model="Model.CreateEntryErrors" />
             }
             <form method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
