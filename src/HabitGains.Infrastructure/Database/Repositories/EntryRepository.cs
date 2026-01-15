@@ -160,6 +160,26 @@ public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRep
         return entries;
     }
 
+    public async Task Create(Entry entry, CancellationToken cancellationToken)
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        command.CommandText = """
+                INSERT INTO entry (Id, HabitId, Date, Quantity, CreatedAt, UpdatedAt)
+                VALUES (@Id, @HabitId, @Date, @Quantity, @CreatedAt, @UpdatedAt)
+            """;
+
+        command.Parameters.AddWithValue("@Id", entry.Id);
+        command.Parameters.AddWithValue("@HabitId", entry.HabitId);
+        command.Parameters.AddWithValue("@Date", entry.Date);
+        command.Parameters.AddWithValue("@Quantity", entry.Quantity);
+        command.Parameters.AddWithValue("@CreatedAt", entry.CreatedAt);
+        command.Parameters.AddWithValue("@UpdatedAt", entry.UpdatedAt is null ? DBNull.Value : entry.UpdatedAt);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task BulkInsert(List<Entry> entries)
     {
         using SqliteConnection connection = await connectionFactory.CreateConnectionAsync();
