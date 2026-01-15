@@ -180,6 +180,25 @@ public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRep
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    public async Task Update(Entry entry, CancellationToken cancellationToken)
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        command.CommandText = """
+                UPDATE entry
+                SET Date = @Date, Quantity = @Quantity, UpdatedAt = @UpdatedAt
+                WHERE Id = @Id
+            """;
+
+        command.Parameters.AddWithValue("@Id", entry.Id);
+        command.Parameters.AddWithValue("@Date", entry.Date);
+        command.Parameters.AddWithValue("@Quantity", entry.Quantity);
+        command.Parameters.AddWithValue("@UpdatedAt", entry.UpdatedAt);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task BulkInsert(List<Entry> entries)
     {
         using SqliteConnection connection = await connectionFactory.CreateConnectionAsync();

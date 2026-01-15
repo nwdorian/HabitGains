@@ -21,6 +21,7 @@ public interface IEntryRepository
         CancellationToken cancellationToken
     );
     Task Create(Entry entry, CancellationToken cancellationToken);
+    Task Update(Entry entry, CancellationToken cancellationToken);
     Task BulkInsert(List<Entry> entries);
     Task<bool> Any();
 }
