@@ -1,4 +1,6 @@
 using FluentValidation;
+using HabitGains.Application.Entries.GetByHabitId;
+using HabitGains.Application.Entries.GetForChart;
 using HabitGains.Application.Habits.Create;
 using HabitGains.Application.Habits.Delete;
 using HabitGains.Application.Habits.Get;
@@ -13,6 +15,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddHabitUseCases();
+        services.AddEntryUseCases();
         services.AddFluentValidation();
 
         return services;
@@ -25,6 +28,12 @@ public static class DependencyInjection
         services.AddScoped<CreateHabitHandler>();
         services.AddScoped<DeleteHabitHandler>();
         services.AddScoped<UpdateHabitHandler>();
+    }
+
+    private static void AddEntryUseCases(this IServiceCollection services)
+    {
+        services.AddScoped<GetEntriesByHabitIdHandler>();
+        services.AddScoped<GetEntriesForChartHandler>();
     }
 
     private static void AddFluentValidation(this IServiceCollection services)

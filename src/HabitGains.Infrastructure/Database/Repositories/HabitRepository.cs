@@ -58,7 +58,7 @@ public class HabitRepository(IDbConnectionFactory connectionFactory) : IHabitRep
         return habits;
     }
 
-    public async Task<int> Count(HabitFilter filter, CancellationToken cancellationToken)
+    public async Task<int> CountHabits(HabitFilter filter, CancellationToken cancellationToken)
     {
         using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
         using SqliteCommand command = connection.CreateCommand();

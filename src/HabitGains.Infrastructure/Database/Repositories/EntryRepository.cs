@@ -1,5 +1,9 @@
 using System.Data.Common;
+using System.Globalization;
+using System.Text;
 using HabitGains.Application.Core.Abstractions.Repositories;
+using HabitGains.Application.Core.Pagination;
+using HabitGains.Application.Core.Pagination.Entries;
 using HabitGains.Domain.Entries;
 using HabitGains.Infrastructure.Database.ConnectionFactory;
 using Microsoft.Data.Sqlite;
@@ -8,6 +12,154 @@ namespace HabitGains.Infrastructure.Database.Repositories;
 
 public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRepository
 {
+    public async Task<IReadOnlyList<Entry>> GetEntriesPageByHabitId(
+        Guid habitId,
+        EntryFilter filter,
+        EntrySorting sorting,
+        Paging paging,
+        CancellationToken cancellationToken
+    )
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        StringBuilder query = new(
+            """
+            SELECT Id, HabitId, Date, Quantity, CreatedAt, UpdatedAt
+            FROM entry
+            WHERE HabitId = @HabitId
+            """
+        );
+
+        ApplyEntryFilter(query, command, filter);
+        ApplyEntrySorting(query, sorting);
+        ApplyPaging(query, command, paging);
+
+        command.CommandText = query.ToString();
+
+        command.Parameters.AddWithValue("@HabitId", habitId);
+
+        using SqliteDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        List<Entry> entries = new();
+
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            Entry entry = new()
+            {
+                Id = reader.GetGuid(0),
+                HabitId = reader.GetGuid(1),
+                Date = reader.GetDateTime(2),
+                Quantity = reader.GetDecimal(3),
+                CreatedAt = reader.GetDateTime(4),
+                UpdatedAt = await reader.IsDBNullAsync(5, cancellationToken) ? null : reader.GetDateTime(5),
+            };
+
+            entries.Add(entry);
+        }
+
+        return entries;
+    }
+
+    public async Task<int> CountEntriesByHabitId(Guid habitId, EntryFilter filter, CancellationToken cancellationToken)
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        StringBuilder query = new(
+            """
+            SELECT Count(*)
+            FROM entry
+            WHERE HabitId = @HabitId
+            """
+        );
+
+        ApplyEntryFilter(query, command, filter);
+
+        command.CommandText = query.ToString();
+
+        command.Parameters.AddWithValue("@HabitId", habitId);
+
+        using SqliteDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        await reader.ReadAsync(cancellationToken);
+        return reader.GetInt32(0);
+    }
+
+    public async Task<decimal> GetTotalQuantityByHabitId(
+        Guid habitId,
+        EntryFilter filter,
+        CancellationToken cancellationToken
+    )
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        StringBuilder query = new(
+            """
+            SELECT SUM(Quantity)
+            FROM entry
+            WHERE HabitId = @HabitId
+            """
+        );
+
+        ApplyEntryFilter(query, command, filter);
+
+        command.CommandText = query.ToString();
+
+        command.Parameters.AddWithValue("@HabitId", habitId);
+
+        using SqliteDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        await reader.ReadAsync(cancellationToken);
+        return await reader.IsDBNullAsync(0, cancellationToken) ? 0 : reader.GetDecimal(0);
+    }
+
+    public async Task<IReadOnlyList<Entry>> GetEntriesForChart(
+        Guid habitId,
+        EntryFilter filter,
+        CancellationToken cancellationToken
+    )
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        StringBuilder query = new(
+            """
+                SELECT Id, HabitId, Date, Quantity, CreatedAt, UpdatedAt
+                FROM entry
+                WHERE HabitId = @HabitId
+            """
+        );
+
+        ApplyEntryFilter(query, command, filter);
+
+        command.CommandText = query.ToString();
+
+        command.Parameters.AddWithValue("@HabitId", habitId);
+
+        using SqliteDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        List<Entry> entries = new();
+
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            Entry entry = new()
+            {
+                Id = reader.GetGuid(0),
+                HabitId = reader.GetGuid(1),
+                Date = reader.GetDateTime(2),
+                Quantity = reader.GetDecimal(3),
+                CreatedAt = reader.GetDateTime(4),
+                UpdatedAt = await reader.IsDBNullAsync(5, cancellationToken) ? null : reader.GetDateTime(5),
+            };
+
+            entries.Add(entry);
+        }
+
+        return entries;
+    }
+
     public async Task BulkInsert(List<Entry> entries)
     {
         using SqliteConnection connection = await connectionFactory.CreateConnectionAsync();
@@ -46,5 +198,44 @@ public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRep
         using SqliteDataReader reader = await command.ExecuteReaderAsync();
 
         return reader.HasRows;
+    }
+
+    private static void ApplyEntryFilter(StringBuilder query, SqliteCommand command, EntryFilter filter)
+    {
+        if (filter.QuantityFrom is not null)
+        {
+            query.Append(" AND Quantity > @QuantityFrom");
+            command.Parameters.AddWithValue("QuantityFrom", filter.QuantityFrom);
+        }
+
+        if (filter.QuantityTo is not null)
+        {
+            query.Append(" AND Quantity < @QuantityTo");
+            command.Parameters.AddWithValue("QuantityTo", filter.QuantityTo);
+        }
+
+        if (filter.DateFrom is not null)
+        {
+            query.Append(" AND Date > @DateFrom");
+            command.Parameters.AddWithValue("@DateFrom", filter.DateFrom);
+        }
+
+        if (filter.DateTo is not null)
+        {
+            query.Append(" AND Date < @DateTo");
+            command.Parameters.AddWithValue("@DateTo", filter.DateTo);
+        }
+    }
+
+    private static void ApplyEntrySorting(StringBuilder query, EntrySorting sorting)
+    {
+        query.Append(CultureInfo.InvariantCulture, $" ORDER BY {sorting.SortColumn} {sorting.SortOrder}");
+    }
+
+    private static void ApplyPaging(StringBuilder query, SqliteCommand command, Paging paging)
+    {
+        query.Append(" LIMIT @PageSize OFFSET @Offset");
+        command.Parameters.AddWithValue("@PageSize", paging.PageSize);
+        command.Parameters.AddWithValue("@Offset", (paging.Page - 1) * paging.PageSize);
     }
 }

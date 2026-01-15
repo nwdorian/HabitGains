@@ -5,6 +5,7 @@
     <ItemGroup>
         <Folder Include="Core\Constants\" />
         <Folder Include="Core\Infrastructure\" />
+        <Folder Include="ViewModels\Entries\" />
         <Folder Include="ViewModels\Shared\" />
     </ItemGroup>
     <ItemGroup>

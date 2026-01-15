@@ -12,7 +12,7 @@ public interface IHabitRepository
         Paging paging,
         CancellationToken cancellationToken
     );
-    Task<int> Count(HabitFilter filter, CancellationToken cancellationToken);
+    Task<int> CountHabits(HabitFilter filter, CancellationToken cancellationToken);
     Task<Habit?> GetById(Guid id, CancellationToken cancellationToken);
     Task Create(Habit habit, CancellationToken cancellationToken);
     Task Delete(Guid id, CancellationToken cancellationToken);
