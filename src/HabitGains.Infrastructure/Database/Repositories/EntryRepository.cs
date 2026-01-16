@@ -160,6 +160,37 @@ public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRep
         return entries;
     }
 
+    public async Task<Entry?> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        command.CommandText = """
+                SELECT Id, HabitId, Date, Quantity, CreatedAt, UpdatedAt
+                FROM entry
+                WHERE Id = @Id
+            """;
+
+        command.Parameters.AddWithValue("@Id", id);
+
+        using SqliteDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        if (!await reader.ReadAsync(cancellationToken))
+        {
+            return null;
+        }
+
+        return new Entry()
+        {
+            Id = reader.GetGuid(0),
+            HabitId = reader.GetGuid(1),
+            Date = reader.GetDateTime(2),
+            Quantity = reader.GetDecimal(3),
+            CreatedAt = reader.GetDateTime(4),
+            UpdatedAt = await reader.IsDBNullAsync(5, cancellationToken) ? null : reader.GetDateTime(5),
+        };
+    }
+
     public async Task Create(Entry entry, CancellationToken cancellationToken)
     {
         using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
@@ -176,6 +207,25 @@ public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRep
         command.Parameters.AddWithValue("@Quantity", entry.Quantity);
         command.Parameters.AddWithValue("@CreatedAt", entry.CreatedAt);
         command.Parameters.AddWithValue("@UpdatedAt", entry.UpdatedAt is null ? DBNull.Value : entry.UpdatedAt);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    public async Task Update(Entry entry, CancellationToken cancellationToken)
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        command.CommandText = """
+                UPDATE entry
+                SET Date = @Date, Quantity = @Quantity, UpdatedAt = @UpdatedAt
+                WHERE Id = @Id
+            """;
+
+        command.Parameters.AddWithValue("@Id", entry.Id);
+        command.Parameters.AddWithValue("@Date", entry.Date);
+        command.Parameters.AddWithValue("@Quantity", entry.Quantity);
+        command.Parameters.AddWithValue("@UpdatedAt", entry.UpdatedAt);
 
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
