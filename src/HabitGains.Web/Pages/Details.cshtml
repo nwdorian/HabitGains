@@ -101,6 +101,7 @@ else
                                 }
                             </a>
                         </th>
+                        <th class="text-end"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -112,6 +113,12 @@ else
                             </td>
                             <td>
                                 @Html.DisplayFor(item => entry.Quantity) @Model.Habit.Measurement
+                            </td>
+                            <td class="text-end">
+                                <a asp-page="Entries/Edit" asp-route-id="@entry.Id" class="btn btn-warning btn-sm option-btn"><i
+                                        class="bi bi-pencil-square"></i></a>
+                                <a asp-page="Entries/Delete" asp-route-id="@entry.Id"
+                                    class="btn btn-danger btn-sm option-btn"><i class="bi bi-trash3"></i></a>
                             </td>
                         </tr>
                     }

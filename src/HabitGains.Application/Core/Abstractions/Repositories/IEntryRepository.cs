@@ -20,6 +20,7 @@ public interface IEntryRepository
         EntryFilter filter,
         CancellationToken cancellationToken
     );
+    Task<Entry?> GetById(Guid id, CancellationToken cancellationToken);
     Task Create(Entry entry, CancellationToken cancellationToken);
     Task Update(Entry entry, CancellationToken cancellationToken);
     Task BulkInsert(List<Entry> entries);

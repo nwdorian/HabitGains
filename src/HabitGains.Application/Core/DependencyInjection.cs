@@ -1,7 +1,9 @@
 using FluentValidation;
 using HabitGains.Application.Entries.Create;
 using HabitGains.Application.Entries.GetByHabitId;
+using HabitGains.Application.Entries.GetById;
 using HabitGains.Application.Entries.GetForChart;
+using HabitGains.Application.Entries.Update;
 using HabitGains.Application.Habits.Create;
 using HabitGains.Application.Habits.Delete;
 using HabitGains.Application.Habits.Get;
@@ -35,6 +37,8 @@ public static class DependencyInjection
     {
         services.AddScoped<GetEntriesByHabitIdHandler>();
         services.AddScoped<GetEntriesForChartHandler>();
+        services.AddScoped<GetEntryByIdHandler>();
+        services.AddScoped<UpdateEntryHandler>();
         services.AddScoped<CreateEntryHandler>();
     }
 
