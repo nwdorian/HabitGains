@@ -230,6 +230,18 @@ public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRep
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    public async Task Delete(Guid id, CancellationToken cancellationToken)
+    {
+        using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        using SqliteCommand command = connection.CreateCommand();
+
+        command.CommandText = "DELETE FROM entry WERE Id = @Id";
+
+        command.Parameters.AddWithValue("@Id", id);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task BulkInsert(List<Entry> entries)
     {
         using SqliteConnection connection = await connectionFactory.CreateConnectionAsync();
