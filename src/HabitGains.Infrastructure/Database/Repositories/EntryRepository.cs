@@ -235,7 +235,7 @@ public class EntryRepository(IDbConnectionFactory connectionFactory) : IEntryRep
         using SqliteConnection connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
         using SqliteCommand command = connection.CreateCommand();
 
-        command.CommandText = "DELETE FROM entry WERE Id = @Id";
+        command.CommandText = "DELETE FROM entry WHERE Id = @Id";
 
         command.Parameters.AddWithValue("@Id", id);
 
