@@ -71,3 +71,7 @@ body {
 .chart-container {
   height: 375px;
 }
+
+.logo {
+  height: 40px;
+}
