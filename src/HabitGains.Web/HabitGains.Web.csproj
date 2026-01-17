@@ -8,6 +8,7 @@
         <Folder Include="Pages\Entries\" />
         <Folder Include="ViewModels\Entries\" />
         <Folder Include="ViewModels\Shared\" />
+        <Folder Include="wwwroot\img\" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Serilog.AspNetCore" />
